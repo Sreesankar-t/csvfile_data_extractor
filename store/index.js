@@ -1,4 +1,4 @@
-import * as d3 from 'd3'
+
 
 export const state = () => ({
   content: [],
@@ -25,24 +25,5 @@ export const mutations = {
 }
 
 export const actions = {
-  async handleFileChange ({ commit }, event) {
-    const file = event.target.files[0]
-    if (!file) return
-
-    commit('setLoader', true)
-
-    try {
-      const reader = new FileReader()
-      reader.onload = async e => {
-        const text = e.target.result
-        const parsedData = d3.csvParse(text)
-        commit('setData', parsedData)
-        commit('setLoader', false)
-        console.log(parsedData)
-      }
-      reader.readAsText(file)
-    } catch (error) {
-      console.error('Error reading CSV:', error)
-    }
-  }
+ 
 }

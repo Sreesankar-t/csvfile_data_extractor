@@ -7,15 +7,17 @@
     </div>
     <div v-else>
       <div v-for="data in dataset1" :key="data.id">
-        {{ data }}
-      </div>
+  <h1>{{ `My name is ${data['name ']}. I am ${data['age '] } years old. My phone number is ${data.mobile}` }}</h1>
+  {{ data }}
+</div>
+
     </div>
   </div>
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
-
+import { mapGetters ,mapMutations} from 'vuex'
+import * as d3 from 'd3'
 export default {
   data () {
     return {}
@@ -27,11 +29,35 @@ export default {
     })
   },
   methods: {
-    handleFileChange (event) {
-      this.$store.dispatch('handleFileChange', event)
+ handleFileChange(event) {
+      const file = event.target.files[0]
+      if (!file) return
+
+      this.setLoader(true)
+
+      try {
+        const reader = new FileReader()
+        reader.onload = e => {
+          const text = e.target.result
+          const parsedData = this.parseCSV(text)
+          this.setData(parsedData) // Here we pass data to the mutation
+          this.setLoader(false)
+          
+        }
+        reader.readAsText(file)
+      } catch (error) {
+        console.error('Error reading CSV:', error)
+      }
+    },
+    ...mapMutations(['setData', 'setLoader']),
+    
+    parseCSV(text) {
+      return d3.csvParse(text) // Returning parsed CSV data
     }
   }
-}
+  
+  }
+
 </script>
 <style scoped>
  .main{
