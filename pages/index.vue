@@ -1,17 +1,17 @@
 <template>
   <div class="main">
-    <h2>please select you .csv file</h2>
+    <h2><NuxtLink to="/about">buefy</NuxtLink></h2>
+    <h2>please select you .csv file </h2>
     <input type="file" @change="handleFileChange" />
+    
     <div v-if="isLoading">
       <h1>Loading....</h1>
     </div>
     <div v-else>
-      <div v-for="data in dataset1" :key="data.id">
-  <h1>{{ `My name is ${data['name ']}. I am ${data['age '] } years old. My phone number is ${data.mobile}` }}</h1>
-  {{ data }}
-</div>
-
-    </div>
+  <div v-for="item in dataset1" :key="item.id">
+    {{ item }}
+  </div>
+  </div>
   </div>
 </template>
 
@@ -40,7 +40,11 @@ export default {
         reader.onload = e => {
           const text = e.target.result
           const parsedData = this.parseCSV(text)
-          this.setData(parsedData) // Here we pass data to the mutation
+           const data = parsedData.map(person => {
+          return `My name is ${person['name ']}. I am ${person['age ']} years old. My phone number is ${person.mobile}.`;
+        });
+          console.log(data,"yes");
+          this.setData(data) // Here we pass data to the mutation
           this.setLoader(false)
           
         }
@@ -50,7 +54,7 @@ export default {
       }
     },
     ...mapMutations(['setData', 'setLoader']),
-    
+
     parseCSV(text) {
       return d3.csvParse(text) // Returning parsed CSV data
     }
